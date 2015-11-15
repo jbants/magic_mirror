@@ -1,7 +1,44 @@
 body{
-	background-color:grey;	
+	background-color:black;
+	width: 100%;
+	height: 100%;	
+}
+
+h1 {
+	margin:5 px;
+}
+
+h4 {
+	margin:5px;
 }
 
 .text{
 	color:white;
+}
+
+#header{
+	text-align:center;
+	padding-top:30px;
+}
+
+#sidebar{
+	float:left;
+}
+
+#map{
+	position: absolute;
+	right: 1%;
+	top: 1%;
+	float:right;
+	height: 90%;
+	width: 300px;
+}
+
+#weather-symbol{
+	font-size:30px;
+}
+
+.headline {
+	display: inline;
+	margin-right: 15px;
 }

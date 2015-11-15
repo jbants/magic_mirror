@@ -1,14 +1,20 @@
-	
+var testing = ''	
+var center = [-114.09, 51.05]
+var weather_map_layer = ''
+
 var weather = $.ajax({
   url: 'http://api.openweathermap.org/data/2.5/weather/?q=calgary,ca&units=metric&APPID=21533dee088f3bf9341ea0fcee12a95f',
   success: function(d){
+	  testing = d
 	  $('#city').text(d.name)
+	  $('#humidity').text("Humidity: " + d.main.humidity + "%")
+	  $('#pressure').text("Pressure: " + d.main.pressure + " hpa")
 	  $('#sunrise').text("Sunrise: " + timeConverter(d.sys.sunrise, ''))
 	  $('#sunset').text("Sunrise: " + timeConverter(d.sys.sunset, ''))
 	  $('#temperature').text(parseFloat(d.main.temp).toFixed(1) + " \xB0C")  
-	  $('#weather-description').text("Weather: " + d.weather[0].description)
+	  $('#weather-description').text(toTitleCase(d.weather[0].description))
 	  $('#weather-symbol').addClass('icon ' +weather_symbols.iconTable[(d.weather[0].icon)] + ' text') 
-	  console.log("fired")
+	  center = [d.coord.lon, d.coord.lat]
 	  setTimeout(weather, 3.6e+6);
   }
 });
@@ -28,6 +34,11 @@ function timeConverter(UNIX_timestamp, return_format){
 	  result = (return_format == 'full' ? date_time : time);
 	  return result
 	}
+
+function toTitleCase(str)
+{
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
 
 function pad(n, width, z) {
 	  z = z || '0';
@@ -78,3 +89,41 @@ function updateClock() {
     setTimeout(updateClock, 1000);
 }
 updateClock(); // initial call
+
+function updateMapLayer(layer) {  
+	var mapLayers = ['precipitation','snow','rain','clouds','temp','wind','pressure']
+	weather_map_layer.setSource(
+		new ol.source.XYZ({
+			url: 'http://{s}.tile.openweathermap.org/map/' + layer + '/{z}/{x}/{y}.png'
+		})
+	);
+}
+
+var map = new ol.Map({
+    target: 'map',
+    layers: [
+		new ol.layer.Tile({
+			source: new ol.source.Stamen({layer: 'toner-background'}),
+		}),
+		weather_map_layer = new ol.layer.Tile({
+			source: new ol.source.XYZ({
+				url: 'http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png'
+			})
+		}), 
+	    new ol.layer.Tile({
+	        source: new ol.source.Stamen({layer: 'toner-lines'}),
+	    }),
+	    new ol.layer.Tile({
+	        source: new ol.source.Stamen({layer: 'toner-labels'}),
+	    }),
+    ],
+    view: new ol.View({
+      center: ol.proj.fromLonLat(center),
+      zoom: 5
+    }),
+    controls: ol.control.defaults({
+        zoom: false,
+        attribution: false,
+    }),
+  });
+
