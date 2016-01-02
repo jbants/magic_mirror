@@ -101,9 +101,9 @@ function updateMapLayer(layer) {
 }
 
 function changeMapLayers(){
+	$('#mapLayer').text("Map Layer: "+toTitleCase(mapLayers[index]));
 	updateMapLayer(mapLayers[index]);
 	index = (index + 1) % mapLayers.length;
-	$('#mapLayer').text("Map Layer: "+toTitleCase(mapLayers[index]));
 	setTimeout(changeMapLayers, 10000);
 }
 
