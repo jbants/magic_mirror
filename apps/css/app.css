@@ -26,13 +26,21 @@ h4 {
 	float:left;
 }
 
-#map{
+#mapContainer{
 	position: absolute;
 	right: 1%;
-	top: 1%;
+	top: 5%;
 	float:right;
 	height: 90%;
 	width: 300px;
+}
+
+#mapLayer{
+	padding-top: 5px;
+}
+
+#map{
+	padding-top: 5px;
 }
 
 #weather-symbol{
