@@ -94,7 +94,7 @@ function updateMapLayer(layer) {
 	var mapLayers = ['precipitation','snow','rain','clouds','temp','wind','pressure']
 	weather_map_layer.setSource(
 		new ol.source.XYZ({
-			url: 'http://${s}.tile.openweathermap.org/map/' + layer + '/${z}/${x}/${y}.png'
+			url: 'http://a.tile.openweathermap.org/map/' + layer + '/{z}/{x}/{y}.png'
 		})
 	);
 }
@@ -107,7 +107,7 @@ var map = new ol.Map({
 		}),
 		weather_map_layer = new ol.layer.Tile({
 			source: new ol.source.XYZ({
-				url: 'http://${s}.tile.openweathermap.org/map/temp/${z}/${x}/${y}.png'
+				url: 'http://a.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png'
 			})
 		}), 
 	    new ol.layer.Tile({
