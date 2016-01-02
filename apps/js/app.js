@@ -1,8 +1,10 @@
 var testing = '';	
-var center = [-114.09, 51.05];
+var center = [-103, 51];
 var weather_map_layer = '';
-var mapLayers = ['precipitation','snow','rain','clouds','temp','wind','pressure'];
+var mapLayers = ['Empty','precipitation','snow','rain','clouds','temp','wind','pressure'];
+var comments = ['You look very nice today!', 'Daaaaaang!!','Looking Good!','Ooooph, Maybe you should stay in bed today']
 var index = 0;	
+var commentIndex = 0;
 
 var weather = $.ajax({
   url: 'http://api.openweathermap.org/data/2.5/weather/?q=calgary,ca&units=metric&APPID=21533dee088f3bf9341ea0fcee12a95f',
@@ -107,6 +109,11 @@ function changeMapLayers(){
 	setTimeout(changeMapLayers, 15000);
 }
 
+function changeComment(){
+	$('#comment').text(comments[commentIndex]);
+	commentIndex = (commentIndex + 1) % comments.length;
+	setTimeout(changeComment, 5000);
+}
 
 var map = new ol.Map({
     target: 'map',
@@ -138,4 +145,5 @@ var map = new ol.Map({
 
 window.onload = function(){
 	changeMapLayers();
+	changeComment();
 };

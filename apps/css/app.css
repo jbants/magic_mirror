@@ -6,7 +6,7 @@ body{
 }
 
 h1 {
-	margin:5 px;
+	margin:5px;
 }
 
 h4 {
@@ -17,25 +17,35 @@ h4 {
 	color:white;
 }
 
+.text-right{
+	float:right;
+}
+
 #header{
 	text-align:center;
 	padding-top:30px;
 }
 
-#sidebar{
+#left-sidebar{
 	float:left;
+}
+
+#right-sidebar{
+	float:right;
+	padding-right:20px;
+	width:20%;
+	word-wrap: break-word;
 }
 
 #mapContainer{
 	position: absolute;
-	right: 1%;
-	top: 5%;
-	float:right;
-	height: 90%;
-	width: 300px;
+	bottom: 5%;
+	height: 10%;
+	width: 100%;
 }
 
 #mapLayer{
+	text-align:center;
 	padding-top: 5px;
 }
 
