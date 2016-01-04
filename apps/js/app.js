@@ -5,23 +5,45 @@ var mapLayers = ['Empty','precipitation','snow','rain','clouds','temp','wind','p
 var comments = ['You look very nice today!', 'Daaaaaang!!','Looking Good!','Ooooph, Maybe you should stay in bed today']
 var index = 0;	
 var commentIndex = 0;
+var url = "http://www.cbc.ca/cmlink/rss-world";
+var stories = [];
+var newsIndex = 0;
+	
+function updateNews(){
+	stories=[]
+	feednami.load(url,function(result){
+	  if(result.error){
+	    console.log(result.error)
+	  }
+	  else{
+	    var entries = result.feed.entries
+	    for(var i = 0; i < entries.length; i++){
+	      var entry = entries[i]
+	      console.log(entry)
+	      stories.push(entry.title + " : " + entry.author)
+	    }
+	  }
+	})
+}
 
-var weather = $.ajax({
-  url: 'http://api.openweathermap.org/data/2.5/weather/?q=calgary,ca&units=metric&APPID=21533dee088f3bf9341ea0fcee12a95f',
-  success: function(d){
-	  testing = d
-	  $('#city').text(d.name)
-	  $('#humidity').text("Humidity: " + d.main.humidity + "%")
-	  $('#pressure').text("Pressure: " + d.main.pressure + " hpa")
-	  $('#sunrise').text("Sunrise: " + timeConverter(d.sys.sunrise, ''))
-	  $('#sunset').text("Sunrise: " + timeConverter(d.sys.sunset, ''))
-	  $('#temperature').text(parseFloat(d.main.temp).toFixed(1) + " \xB0C")  
-	  $('#weather-description').text(toTitleCase(d.weather[0].description))
-	  $('#weather-symbol').addClass('icon ' +weather_symbols.iconTable[(d.weather[0].icon)] + ' text') 
-	  center = [d.coord.lon, d.coord.lat]
-	  setTimeout(weather, 3.6e+6);
-  }
-});
+function updateWeather(){
+	var weather = $.ajax({
+		  url: 'http://api.openweathermap.org/data/2.5/weather/?q=calgary,ca&units=metric&APPID=21533dee088f3bf9341ea0fcee12a95f',
+		  success: function(d){
+			  testing = d
+			  $('#city').text(d.name)
+			  $('#humidity').text("Humidity: " + d.main.humidity + "%")
+			  $('#pressure').text("Pressure: " + d.main.pressure + " hpa")
+			  $('#sunrise').text("Sunrise: " + timeConverter(d.sys.sunrise, ''))
+			  $('#sunset').text("Sunset: " + timeConverter(d.sys.sunset, ''))
+			  $('#temperature').text(parseFloat(d.main.temp).toFixed(1) + " \xB0C")  
+			  $('#weather-description').text(toTitleCase(d.weather[0].description))
+			  $('#weather-symbol').addClass('icon ' +weather_symbols.iconTable[(d.weather[0].icon)] + ' text') 
+			  center = [d.coord.lon, d.coord.lat]
+		  }
+		});
+	setTimeout(updateWeather, 3600000);
+}
 
 function timeConverter(UNIX_timestamp, return_format){
 	  var a = new Date(UNIX_timestamp * 1000);
@@ -75,10 +97,10 @@ var weather_symbols = {
 
 function updateClock() {
     var now = new Date(); // current date
-	var hour = (now.getHours() <= 12 ? now.getHours() : now.getHours()-12);
-	var tod = (now.getHours() < 12 ? "am" : "pm");
+	var hour = now.getHours()// USE FOR 12 HOUR(now.getHours() <= 12 ? now.getHours() : now.getHours()-12);
+	// USE FOR 12 HOUR var tod = (now.getHours() < 12 ? "am" : "pm");
 	
-    time = hour + ':' + now.getMinutes() + ':' + pad(now.getSeconds(),2) + " " + tod, 
+    time = hour + ':' + pad(now.getMinutes(),2) + ':' + pad(now.getSeconds(),2), //// USE FOR 12 HOUR + " " + tod, 
     
     months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -92,7 +114,6 @@ function updateClock() {
     // call this function again in 1000ms
     setTimeout(updateClock, 1000);
 }
-updateClock(); // initial call
 
 function updateMapLayer(layer) {  
 	weather_map_layer.setSource(
@@ -100,6 +121,12 @@ function updateMapLayer(layer) {
 			url: 'http://a.tile.openweathermap.org/map/' + layer + '/{z}/{x}/{y}.png'
 		})
 	);
+}
+
+function changeNewsLayers(){
+	$('#title').text(stories[newsIndex]);
+	newsIndex = (newsIndex + 1) % stories.length;
+	setTimeout(changeNewsLayers, 5000);
 }
 
 function changeMapLayers(){
@@ -144,6 +171,10 @@ var map = new ol.Map({
   });
 
 window.onload = function(){
+	updateNews()
+	updateClock();
 	changeMapLayers();
 	changeComment();
+    setTimeout(changeNewsLayers, 1000);
+	updateWeather();
 };
